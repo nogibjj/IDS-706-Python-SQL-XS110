@@ -1,60 +1,207 @@
 
-# World Population
-
-
-## Data
-
-The data is from kaggle [world population](https://www.kaggle.com/datasets/iamsouravbanerjee/world-population-dataset). In this Dataset, we have Historical Population data for every Country/Territory in the world by different parameters like Area Size of the Country/Territory, Name of the Continent, Name of the Capital, Density, Population Growth Rate, Ranking based on Population, World Population Percentage, etc.
-
-I downloaded `word_population.csv` from kaggle and uploaded it into this resporitory.
+# Python Script interacting with SQL Database
 
 ## Setup
 
-I used week2 mini project as a template and made the following modifications: 
+I used my python template as a template and made the following modifications: 
 
 ### 1. Update requirements.txt:
 ```
 #script
-polars
-pyarrow
-tabulate
+nbval
+ruff
 ```
-### 2. Read data
+### 2.Update main.py
 
-Instead of using pd.read_csv, I use `pl.read_csv` to read `world_population.csv`
+I updated the main.py using sqlite3 to connect to a SQL database:`GroceryDB` and perform CRUD operations, I alse create a brand new database `newDB`
+
+Here is the specific function:
+```
+def connect_to_database():
+    try:
+        connection = sqlite3.connect("GroceryDB.db")
+        print("Connected to SQLite database")
+        return connection
+    except sqlite3.Error as e:
+        print(f"Error: {e}")
+
+    finally:
+        # Close the database connection
+        if connection:
+            connection.close()
+            print("Connection closed")
 
 
-### 3. Update script.py
+def create_operation():
+    try:
+        conn = sqlite3.connect("newDB.db")
+        cursor = conn.cursor()
 
-I updated the script.py using Polars for descriptive statistics to generate summary statistics (mean, median, standard deviation)
+        # create a table
+        cursor.execute(
+            """CREATE TABLE IF NOT EXISTS employees
+                      (id INTEGER PRIMARY KEY,
+                       name TEXT,
+                       department TEXT)"""
+        )
 
-And I also created data visualization.
+        # Commit the transaction
+        conn.commit()
 
-### 4. Generate report.md
+        print("Table created successfully!")
 
-Run ` make all` in terminal, I generated `report.md` automatically.
+    except sqlite3.Error as e:
+        print(f"Error: {e}")
 
-![Alt text](/image/image6.png)
-## Data Visualization
+    finally:
+        # Close the database connection
+        if conn:
+            conn.close()
+            print("Connection closed")
 
-I analysed the 234 countries' population in 2022, growth rate and Area(km²).
 
-### 1. Summary statistics using the describe method
+def read_operation():
+    try:
+        conn = sqlite3.connect("GroceryDB.db")
+        cursor = conn.cursor()
 
-![Alt text](/image/image1.png)
+        # Perform database operations here
+        # Query the database for the top 5 rows of the GroceryDB table
+        cursor.execute("SELECT * FROM GroceryDB LIMIT 5;")
+        rows = cursor.fetchall()
+        print("Data in the table:")
+        for row in rows:
+            print(row)
 
-### 2. Mean, Median and Mode
+    except sqlite3.Error as e:
+        print(f"Error: {e}")
 
-![Alt text](/image/image2.png)
+    finally:
+        # Close the database connection
+        if conn:
+            conn.close()
+            print("Connection closed")
 
-### 3. Variance and standard deviation
 
-![Alt text](/image/image3.png)
+def update_operation():
+    try:
+        conn = sqlite3.connect("GroceryDB.db")
+        cursor = conn.cursor()
 
-### 4. histogram of 2022 population
+        # Example data to be inserted
+        data_to_insert = [
+            (
+                "general name",
+                "count_products",
+                "ingred_FPro",
+                "avg_FPro_products",
+                "avg_distance_root",
+                "ingred_normalization_term",
+                "semantic_tree_name",
+                "semantic_tree_node",
+            ),
+            (
+                "arabica coffee",
+                21,
+                0.18903204038025467,
+                0.2754401549508692,
+                2.0476190476190474,
+                15.16666666666667,
+                "",
+                "",
+            ),
+            (
+                "grape tomatoes",
+                18,
+                0.21119429773632484,
+                0.4212998456790123,
+                3.111111111111111,
+                10.594047619047616,
+                "",
+                "",
+            ),
+            (
+                "cherry tomatoes",
+                11,
+                0.23032828967178565,
+                0.31386826599326595,
+                2.1818181818181817,
+                8.785714285714283,
+                "",
+                "",
+            ),
+            (
+                "yellow bell pepper",
+                16,
+                0.23402118394914562,
+                0.46428807870370364,
+                4.375,
+                8.323412698412698,
+                "",
+                "",
+            ),
+        ]
 
-![Alt text](/image/population_histogram.png)
+        # SQL query to insert data into the table
 
-### 5. boxplot of 2022 population
+        cursor.executemany(
+            """
+            INSERT INTO GroceryDB 
+            (general_name, count_products, ingred_FPro, avg_FPro_products, 
+            avg_distance_root, ingred_normalization_term, semantic_tree_name, 
+            semantic_tree_node)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        """,
+            data_to_insert,
+        )
 
-![Alt text](/image/population_boxplot.png)
+        # Commit the transaction
+        conn.commit()
+
+        print("Record updated successfully!")
+
+    except sqlite3.Error as e:
+        print(f"Error: {e}")
+
+    finally:
+        # Close the database connection
+        if conn:
+            conn.close()
+            print("Connection closed")
+
+
+def delete_operation():
+    try:
+        conn = sqlite3.connect("GroceryDB.db")
+        cursor = conn.cursor()
+
+        # Example data to be deleted
+        data_to_delete = ("yellow bell pepper",)
+        # SQL query to delete data from the table
+        cursor.execute("DELETE FROM GroceryDB WHERE general_name=?;", data_to_delete)
+
+        # Commit the transaction
+        conn.commit()
+
+        print("Record deleted successfully!")
+
+    except sqlite3.Error as e:
+        print(f"Error: {e}")
+
+    finally:
+        # Close the database connection
+        if conn:
+            conn.close()
+            print("Connection closed")
+```
+
+## Results
+
+[![CI](https://github.com/nogibjj/IDS-706-Python-SQL-XS110/actions/workflows/cicd.yml/badge.svg)](https://github.com/nogibjj/IDS-706-Python-SQL-XS110/actions/workflows/cicd.yml)
+
+### 1. successful database operations
+
+![Alt text](image1.png)
+
+### 2. passed all tests
+![Alt text](image2.png)
