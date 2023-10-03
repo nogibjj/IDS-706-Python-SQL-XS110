@@ -16,6 +16,8 @@ ruff
 I updated the main.py using sqlite3 to connect to a SQL database:`GroceryDB` and perform CRUD operations, I alse create a brand new database `newDB`
 
 Here is the specific function:
+
+connect
 ```
 def connect_to_database():
     try:
@@ -30,7 +32,10 @@ def connect_to_database():
         if connection:
             connection.close()
             print("Connection closed")
+```
 
+create
+```
 
 def create_operation():
     try:
@@ -59,7 +64,9 @@ def create_operation():
             conn.close()
             print("Connection closed")
 
-
+```
+read
+```
 def read_operation():
     try:
         conn = sqlite3.connect("GroceryDB.db")
@@ -82,7 +89,9 @@ def read_operation():
             conn.close()
             print("Connection closed")
 
-
+```
+update
+```
 def update_operation():
     try:
         conn = sqlite3.connect("GroceryDB.db")
@@ -169,7 +178,10 @@ def update_operation():
             conn.close()
             print("Connection closed")
 
+```
 
+delete
+```
 def delete_operation():
     try:
         conn = sqlite3.connect("GroceryDB.db")
@@ -201,7 +213,7 @@ def delete_operation():
 
 ### 1. successful database operations
 
-![Alt text](image1.png)
+![Alt text](image/image1.png)
 
 ### 2. passed all tests
-![Alt text](image2.png)
+![Alt text](image/image2.png)
