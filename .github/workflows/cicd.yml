@@ -12,6 +12,7 @@ jobs:
     strategy:
       matrix:
         python-version: [3.7,3.8,3.9,3.10.x,3.11]
+ 
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -41,14 +42,4 @@ jobs:
           name: ml_pipeline-artifacts
           path: ${{ github.workspace }}/output
 
-      - name: Save to repository
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          echo GH_TOKEN: "${GH_TOKEN}"
-          git config --global user.name 'github-actions'
-          git config --local user.email "action@github.com"
-          git add .
-          git commit -m "Add results"
-          git push
 
